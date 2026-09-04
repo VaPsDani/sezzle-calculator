@@ -88,3 +88,28 @@ describe('calculate', () => {
     expect(JSON.parse(init?.body as string)).not.toHaveProperty('b')
   })
 })
+
+describe('calculate with a body the contract does not cover', () => {
+  it('reports an error response that is not the error envelope', async () => {
+    // A proxy answering for a backend that is down sends HTML, not JSON.
+    stubFetch(new Response('<html>502 Bad Gateway</html>', { status: 502 }))
+
+    const response = await calculate('add', 1, 2)
+
+    expect(response).toEqual({
+      ok: false,
+      error: { code: 'UNEXPECTED_RESPONSE', message: expect.stringContaining('502') },
+    })
+  })
+
+  it('reports a 200 whose body is not JSON', async () => {
+    stubFetch(new Response('not json at all', { status: 200 }))
+
+    const response = await calculate('add', 1, 2)
+
+    expect(response).toEqual({
+      ok: false,
+      error: { code: 'UNEXPECTED_RESPONSE', message: expect.any(String) },
+    })
+  })
+})

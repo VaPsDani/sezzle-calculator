@@ -105,3 +105,37 @@ describe('Calculator', () => {
     expect(requestMock).not.toHaveBeenCalled()
   })
 })
+
+describe('Calculator keys without a request', () => {
+  it('types a decimal and flips the sign without calling the API', async () => {
+    const user = userEvent.setup()
+
+    render(<Calculator />)
+
+    await user.click(key('Four'))
+    await user.click(key('Decimal point'))
+    await user.click(key('Two'))
+    expect(displayValue()).toBe('4.2')
+
+    await user.click(key('Toggle sign'))
+    expect(displayValue()).toBe('-4.2')
+
+    await user.click(key('Toggle sign'))
+    expect(displayValue()).toBe('4.2')
+
+    expect(requestMock).not.toHaveBeenCalled()
+  })
+
+  it('refuses to calculate when the second operand is missing', async () => {
+    const user = userEvent.setup()
+
+    render(<Calculator />)
+
+    await user.click(key('Five'))
+    await user.click(key('Add'))
+    await user.click(key('Equals'))
+
+    expect(requestMock).not.toHaveBeenCalled()
+    expect(screen.getByRole('alert').textContent).toContain('second operand')
+  })
+})

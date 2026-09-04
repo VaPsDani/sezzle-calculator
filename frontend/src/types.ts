@@ -7,8 +7,6 @@ export type Operation =
   | 'percentage'
   | 'sqrt'
 
-export const UNARY_OPERATIONS: readonly Operation[] = ['sqrt']
-
 /** Codes the API is known to return, plus the two this client produces itself. */
 export type KnownErrorCode =
   | 'DIVISION_BY_ZERO'

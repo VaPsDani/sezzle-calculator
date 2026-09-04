@@ -187,6 +187,81 @@ func TestRoutes(t *testing.T) {
 			wantStatus: http.StatusOK,
 			wantHealth: &healthResponse{Status: "ok"},
 		},
+		{
+			name:       "a body larger than the limit is refused",
+			method:     http.MethodPost,
+			path:       "/api/v1/add",
+			body:       `{"a": 1, "b": 2, "padding": "` + strings.Repeat("x", 1100) + `"}`,
+			wantStatus: http.StatusRequestEntityTooLarge,
+			wantCode:   "REQUEST_TOO_LARGE",
+		},
+		{
+			name:       "a field the contract does not define is rejected",
+			method:     http.MethodPost,
+			path:       "/api/v1/add",
+			body:       `{"a": 1, "b": 2, "c": 3}`,
+			wantStatus: http.StatusBadRequest,
+			wantCode:   "UNKNOWN_FIELD",
+		},
+		{
+			// Decode would read the first object and drop the rest silently.
+			name:       "a body holding more than one object is rejected",
+			method:     http.MethodPost,
+			path:       "/api/v1/add",
+			body:       `{"a":1,"b":2}{"a":3,"b":4}`,
+			wantStatus: http.StatusBadRequest,
+			wantCode:   "INVALID_JSON",
+		},
+		{
+			name:       "a truncated body is rejected",
+			method:     http.MethodPost,
+			path:       "/api/v1/add",
+			body:       `{"a": 10, "b": 4`,
+			wantStatus: http.StatusBadRequest,
+			wantCode:   "INVALID_JSON",
+		},
+		{
+			name:       "a body that is an array is rejected",
+			method:     http.MethodPost,
+			path:       "/api/v1/add",
+			body:       `[10, 4]`,
+			wantStatus: http.StatusBadRequest,
+			wantCode:   "INVALID_JSON",
+		},
+		{
+			// Add cannot report an overflow itself, so the API layer guards it
+			// before the result reaches an encoder that cannot represent it.
+			name:       "an addition that overflows float64 is unprocessable",
+			method:     http.MethodPost,
+			path:       "/api/v1/add",
+			body:       `{"a": 1e308, "b": 1e308}`,
+			wantStatus: http.StatusUnprocessableEntity,
+			wantCode:   "RESULT_OUT_OF_RANGE",
+		},
+		{
+			name:       "a binary operation without its first operand is rejected",
+			method:     http.MethodPost,
+			path:       "/api/v1/add",
+			body:       `{"b": 3}`,
+			wantStatus: http.StatusBadRequest,
+			wantCode:   "MISSING_FIELD",
+		},
+		{
+			name:       "a unary operation without its operand is rejected",
+			method:     http.MethodPost,
+			path:       "/api/v1/sqrt",
+			body:       `{}`,
+			wantStatus: http.StatusBadRequest,
+			wantCode:   "MISSING_FIELD",
+		},
+		{
+			name:       "a unary operation with a malformed body is rejected",
+			method:     http.MethodPost,
+			path:       "/api/v1/sqrt",
+			body:       `{no es json`,
+			wantStatus: http.StatusBadRequest,
+			wantCode:   "INVALID_JSON",
+		},
 	}
 
 	router := NewRouter()
