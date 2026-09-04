@@ -12,23 +12,19 @@ import (
 	"github.com/VaPsDani/sezzle-calculator/backend/internal/calculator"
 )
 
-// errorResponse is the body returned for every failed request.
+const unknownFieldPrefix = "json: unknown field "
+
 type errorResponse struct {
 	Error errorBody `json:"error"`
 }
 
-// errorBody carries a stable machine readable code plus a human readable
-// message. Clients branch on Code; Message is only for people reading logs or
-// screens, which leaves it free to be reworded or translated.
 type errorBody struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
 }
 
-// requestError describes a request the server refuses to process before any
-// arithmetic happens: malformed JSON, a missing operand, a wrong type. It
-// carries its own status and code because those are decided at the point the
-// problem is detected, where the detail is still available.
+// Carries its own status and code because both are only known where the
+// problem is detected, while the detail is still available.
 type requestError struct {
 	status  int
 	code    string
@@ -61,8 +57,6 @@ func trailingContent() error {
 	}
 }
 
-// decodeError translates a failure from encoding/json or from the body size
-// limit into a requestError that names what the caller got wrong.
 func decodeError(err error) error {
 	var (
 		maxBytesErr *http.MaxBytesError
@@ -93,8 +87,6 @@ func decodeError(err error) error {
 		}
 
 	case errors.As(err, &typeErr):
-		// Field is empty when the mismatch is the body itself, as in a JSON
-		// array where an object is expected.
 		if typeErr.Field == "" {
 			return &requestError{
 				status:  http.StatusBadRequest,
@@ -116,8 +108,7 @@ func decodeError(err error) error {
 		}
 
 	// encoding/json reports an unknown field as a plain errors.New, with no
-	// exported type or sentinel to match on, so the prefix is the only handle
-	// available. It is checked last so that no typed case is shadowed by it.
+	// exported type to match on, so this must come last to shadow nothing.
 	case strings.HasPrefix(err.Error(), unknownFieldPrefix):
 		return &requestError{
 			status:  http.StatusBadRequest,
@@ -134,16 +125,6 @@ func decodeError(err error) error {
 	}
 }
 
-// unknownFieldPrefix is the wording encoding/json uses when
-// DisallowUnknownFields rejects a field.
-const unknownFieldPrefix = "json: unknown field "
-
-// statusAndCode maps an error to the HTTP status and the API error code that
-// describe it. It is the single place where a domain error becomes a wire
-// concern, which is what keeps the calculator package free of HTTP.
-//
-// Anything unrecognised is a bug in this server rather than in the request, so
-// it maps to 500.
 func statusAndCode(err error) (int, string) {
 	var reqErr *requestError
 	if errors.As(err, &reqErr) {
@@ -165,15 +146,12 @@ func statusAndCode(err error) (int, string) {
 	}
 }
 
-// writeError sends err to the client in the documented error envelope.
-//
-// The message of an unmapped error is replaced with a fixed string so that
-// internal detail never reaches the client; the original is logged instead.
 func writeError(w http.ResponseWriter, err error) {
 	status, code := statusAndCode(err)
 
 	message := err.Error()
 	if status == http.StatusInternalServerError {
+		// An unmapped error can carry internal detail, so it is logged, not sent.
 		log.Printf("api: unmapped error: %v", err)
 		message = "internal server error"
 	}

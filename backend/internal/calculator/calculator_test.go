@@ -6,19 +6,10 @@ import (
 	"testing"
 )
 
-// epsilon is the tolerance used to compare floating point results.
-// Binary floating point cannot represent most decimal fractions exactly,
-// so results are compared for closeness instead of equality.
 const epsilon = 1e-9
 
-// almostEqual reports whether got and want are close enough to be treated as
-// the same result.
-//
-// It combines an absolute and a relative tolerance. The absolute check covers
-// values near zero, where a relative tolerance collapses to nothing. The
-// relative check covers large magnitudes such as 1e154, where consecutive
-// float64 values are already farther apart than epsilon and an absolute
-// tolerance would be exactly as strict as ==.
+// Absolute tolerance for values near zero, relative for large magnitudes where
+// consecutive float64 values are already farther apart than epsilon.
 func almostEqual(got, want float64) bool {
 	diff := math.Abs(got - want)
 	if diff <= epsilon {
@@ -111,7 +102,7 @@ func TestDivide(t *testing.T) {
 		name    string
 		a, b    float64
 		want    float64
-		wantErr error // nil means the call is expected to succeed
+		wantErr error
 	}{
 		{name: "positive integers", a: 10, b: 2, want: 5},
 		{name: "non exact quotient", a: 10, b: 4, want: 2.5},
@@ -133,7 +124,6 @@ func TestDivide(t *testing.T) {
 				if !errors.Is(err, tt.wantErr) {
 					t.Fatalf("Divide(%v, %v) error = %v, want %v", tt.a, tt.b, err, tt.wantErr)
 				}
-				// On failure the numeric result carries no meaning and must be the zero value.
 				if got != 0 {
 					t.Errorf("Divide(%v, %v) = %v on error, want 0", tt.a, tt.b, got)
 				}
@@ -155,7 +145,7 @@ func TestPower(t *testing.T) {
 		name           string
 		base, exponent float64
 		want           float64
-		wantErr        error // nil means the call is expected to succeed
+		wantErr        error
 	}{
 		{name: "positive integers", base: 2, exponent: 3, want: 8},
 		{name: "negative base with even exponent", base: -2, exponent: 2, want: 4},
@@ -183,7 +173,6 @@ func TestPower(t *testing.T) {
 				if !errors.Is(err, tt.wantErr) {
 					t.Fatalf("Power(%v, %v) error = %v, want %v", tt.base, tt.exponent, err, tt.wantErr)
 				}
-				// A rejected result must not leak Inf or NaN to the caller.
 				if got != 0 {
 					t.Errorf("Power(%v, %v) = %v on error, want 0", tt.base, tt.exponent, got)
 				}
@@ -205,7 +194,7 @@ func TestSqrt(t *testing.T) {
 		name    string
 		a       float64
 		want    float64
-		wantErr error // nil means the call is expected to succeed
+		wantErr error
 	}{
 		{name: "perfect square", a: 9, want: 3},
 		{name: "irrational result", a: 2, want: 1.4142135623730951},
