@@ -1,3 +1,3 @@
 module github.com/VaPsDani/sezzle-calculator/backend
 
-go 1.27
+go 1.23

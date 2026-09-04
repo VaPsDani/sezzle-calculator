@@ -126,6 +126,10 @@ func decodeRequest(w http.ResponseWriter, r *http.Request) (calculationRequest, 
 	r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 
 	decoder := json.NewDecoder(r.Body)
+
+	// This rejects a field the contract does not define, but encoding/json
+	// still matches names case insensitively, so {"A":1} is accepted as "a".
+	// Making that strict would mean decoding twice, which is not worth it here.
 	decoder.DisallowUnknownFields()
 
 	var req calculationRequest
