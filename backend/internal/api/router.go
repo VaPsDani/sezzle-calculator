@@ -27,7 +27,9 @@ func NewRouter() http.Handler {
 
 	mux.HandleFunc("/", fallbackHandler(methodsByPath))
 
-	return mux
+	// Recovery sits inside logging so that a recovered panic returns normally
+	// and still gets its access log line, with the 500 it ended up writing.
+	return withLogging(withRecovery(withCORS(mux)))
 }
 
 func handleHealth(w http.ResponseWriter, _ *http.Request) {
