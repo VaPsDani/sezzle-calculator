@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>10/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">77.77% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>7/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>10/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -192,7 +192,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -245,31 +245,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">420x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -277,7 +274,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -303,7 +303,7 @@ interface KeyDefinition {
   variant: 'digit' | 'function' | 'operator' | 'equals'
 }
 &nbsp;
-const KEYS: readonly KeyDefinition[] = <span class="cstat-no" title="statement not covered" >[</span>
+const KEYS: readonly KeyDefinition[] = [
   { label: 'C', ariaLabel: 'Clear', action: { type: 'clear' }, variant: 'function' },
   { label: '\u00b1', ariaLabel: 'Toggle sign', action: { type: 'toggleSign' }, variant: 'function' },
   { label: '\u221a', ariaLabel: 'Square root', action: { type: 'unary', operation: 'sqrt' }, variant: 'function' },
@@ -344,7 +344,7 @@ interface KeypadProps {
   onToggleSign: () =&gt; void
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >Keypad({</span>
+export function Keypad({
   disabled,
   activeOperation,
   onDigit,
@@ -355,29 +355,29 @@ export function <span class="fstat-no" title="function not covered" >Keypad({</s
   onClear,
   onToggleSign,
 }: KeypadProps) {
-  function <span class="fstat-no" title="function not covered" >run(a</span>ction: KeyAction) {
-<span class="cstat-no" title="statement not covered" >    switch (action.type) {</span>
+  function run(action: KeyAction) {
+    switch (action.type) {
       case 'digit':
-<span class="cstat-no" title="statement not covered" >        return onDigit(action.value)</span>
-      case 'decimal':
+        return onDigit(action.value)
+<span class="branch-1 cbranch-no" title="branch not covered" >      case 'decimal':</span>
 <span class="cstat-no" title="statement not covered" >        return onDecimal()</span>
       case 'operation':
-<span class="cstat-no" title="statement not covered" >        return onOperation(action.operation)</span>
+        return onOperation(action.operation)
       case 'unary':
-<span class="cstat-no" title="statement not covered" >        return onUnary(action.operation)</span>
+        return onUnary(action.operation)
       case 'equals':
-<span class="cstat-no" title="statement not covered" >        return onEquals()</span>
+        return onEquals()
       case 'clear':
-<span class="cstat-no" title="statement not covered" >        return onClear()</span>
-      case 'toggleSign':
+        return onClear()
+<span class="branch-6 cbranch-no" title="branch not covered" >      case 'toggleSign':</span>
 <span class="cstat-no" title="statement not covered" >        return onToggleSign()</span>
     }
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className="keypad"&gt;
-      {KEYS.<span class="fstat-no" title="function not covered" >map((k</span>ey) =&gt; (
-<span class="cstat-no" title="statement not covered" >        &lt;button</span>
+      {KEYS.map((key) =&gt; (
+        &lt;button
           key={key.ariaLabel}
           type="button"
           className={`key key--${key.variant}`}
@@ -388,7 +388,7 @@ export function <span class="fstat-no" title="function not covered" >Keypad({</s
               : undefined
           }
           disabled={disabled}
-<span class="fstat-no" title="function not covered" >          onClick={() =&gt; <span class="cstat-no" title="statement not covered" >r</span>un(key.action)}</span>
+          onClick={() =&gt; run(key.action)}
         &gt;
           {key.label}
         &lt;/button&gt;
@@ -403,7 +403,7 @@ export function <span class="fstat-no" title="function not covered" >Keypad({</s
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-04T19:16:04.420Z
+                at 2026-09-04T19:24:43.347Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
