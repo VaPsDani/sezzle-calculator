@@ -1,0 +1,62 @@
+# ---------- Go (backend) ----------
+# Binarios compilados
+backend/server
+backend/server.exe
+backend/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Cobertura (los reportes publicados viven en docs/coverage/)
+coverage.out
+coverage.html
+backend/coverage.out
+
+# Workspaces y vendoring
+go.work
+go.work.sum
+vendor/
+
+# ---------- Node / React (frontend) ----------
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/coverage/
+frontend/.vite/
+frontend/stats.html
+*.local
+
+# Logs de gestores de paquetes
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ---------- Entorno ----------
+.env
+.env.*
+!.env.example
+
+# ---------- Editores / IDE ----------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ---------- Sistema operativo ----------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
