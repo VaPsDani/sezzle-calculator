@@ -1,78 +1,78 @@
 .calculator {
-  --surface: #ffffff;
-  --screen: #f4f4f5;
-  --ink: #18181b;
-  --muted: #71717a;
-  --border: #e4e4e7;
-  --key: #f4f4f5;
-  --key-hover: #e4e4e7;
-  --operator: #e0e7ff;
-  --operator-active: #4f46e5;
-  --accent: #4f46e5;
-  --danger: #b91c1c;
-
-  width: min(22rem, 100%);
-  padding: 1rem;
+  width: 100%;
+  max-width: 21rem;
+  padding: 0.75rem;
   border: 1px solid var(--border);
-  border-radius: 1rem;
+  border-radius: var(--radius);
   background: var(--surface);
-  color: var(--ink);
-}
-
-@media (prefers-color-scheme: dark) {
-  .calculator {
-    --surface: #18181b;
-    --screen: #101012;
-    --ink: #fafafa;
-    --muted: #a1a1aa;
-    --border: #27272a;
-    --key: #27272a;
-    --key-hover: #3f3f46;
-    --operator: #312e81;
-    --operator-active: #6366f1;
-    --accent: #6366f1;
-    --danger: #fca5a5;
-  }
 }
 
 .calculator[aria-busy='true'] {
   cursor: progress;
 }
 
+/* ---------- display ---------- */
+
 .display {
-  display: grid;
-  grid-template-columns: 1.5rem 1fr;
-  align-items: baseline;
-  gap: 0.25rem 0.5rem;
-  padding: 1rem;
-  border-radius: 0.75rem;
+  padding: 1rem 0.875rem;
+  border-radius: var(--radius-sm);
   background: var(--screen);
 }
 
 .display__pending {
-  font-size: 1.25rem;
-  color: var(--accent);
+  display: block;
+  min-height: 1.25rem;
+  color: var(--accent-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
 }
 
-/* The hook caps the display at 15 characters, so this only has to cope with
-   narrow viewports rather than unbounded text. */
+/* The hook caps the value at 15 characters, so the ellipsis is only a
+   safeguard for the narrowest viewports. */
 .display__value {
+  display: block;
   overflow: hidden;
-  font-size: clamp(1.5rem, 8vw, 2.25rem);
+  font-size: clamp(1.5rem, 7vw, 2rem);
   font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+/* Kept mounted at all times: a live region has to exist before its content
+   changes for a screen reader to announce it. */
 .display__error {
-  grid-column: 1 / -1;
-  min-height: 1.25rem;
-  margin: 0.5rem 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  margin: 0.75rem 0 0;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--danger-border);
+  border-left-width: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--danger-bg);
   color: var(--danger);
   font-size: 0.8125rem;
-  text-align: right;
+  line-height: 1.35;
 }
+
+/* Invisible rather than removed, so the box reserves its space and the layout
+   does not jump when an error appears. */
+.display__error:empty {
+  opacity: 0;
+}
+
+.display__error-icon {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+/* ---------- keypad ---------- */
 
 .keypad {
   display: grid;
@@ -82,28 +82,42 @@
 }
 
 .key {
-  padding: 0.9rem 0;
-  border: none;
-  border-radius: 0.625rem;
+  /* 44px is the minimum touch target recommended by Apple's HIG. */
+  min-height: 3rem;
+  min-width: 2.75rem;
+  padding: 0.5rem 0.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
   background: var(--key);
-  color: var(--ink);
+  color: var(--text);
   font: inherit;
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   cursor: pointer;
+  transition: background-color 120ms ease, transform 60ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .key:hover:not(:disabled) {
   background: var(--key-hover);
 }
 
+.key:active:not(:disabled) {
+  background: var(--key-active);
+  transform: translateY(1px);
+}
+
 .key:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
 .key:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.45;
+}
+
+.key--function {
+  color: var(--text-muted);
 }
 
 .key--operator {
@@ -111,23 +125,36 @@
   font-weight: 600;
 }
 
-.key--operator[aria-pressed='true'] {
-  background: var(--operator-active);
-  color: #ffffff;
+.key--operator:hover:not(:disabled) {
+  background: var(--operator-hover);
 }
 
-.key--function {
-  color: var(--muted);
+/* The active operator is marked by a border as well as by colour, so it does
+   not rely on hue alone. */
+.key--operator[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
 }
 
 .key--equals {
   grid-column: 1 / -1;
   background: var(--accent);
-  color: #ffffff;
+  color: var(--accent-text);
   font-weight: 600;
 }
 
-.key--equals:hover:not(:disabled) {
-  filter: brightness(1.1);
-  background: var(--accent);
+.key--equals:hover:not(:disabled),
+.key--equals:active:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .key {
+    transition: none;
+  }
+
+  .key:active:not(:disabled) {
+    transform: none;
+  }
 }

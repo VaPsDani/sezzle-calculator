@@ -33,9 +33,17 @@ export function Display({ value, pendingOp, error }: DisplayProps) {
       </output>
 
       {/* Always mounted: a live region has to exist before it changes for a
-          screen reader to announce it. */}
+          screen reader to announce it. The icon and border carry the error
+          state for readers who cannot rely on colour. */}
       <p className="display__error" role="alert">
-        {error}
+        {error && (
+          <>
+            <span className="display__error-icon" aria-hidden="true">
+              {'\u26a0'}
+            </span>
+            <span>{error}</span>
+          </>
+        )}
       </p>
     </div>
   )
