@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"math"
+	"mime"
 	"net/http"
 
 	"github.com/VaPsDani/sezzle-calculator/backend/internal/calculator"
@@ -118,6 +119,10 @@ func unaryHandler(name string, op unaryOperation) http.HandlerFunc {
 }
 
 func decodeRequest(w http.ResponseWriter, r *http.Request) (calculationRequest, error) {
+	if err := requireJSONContentType(r); err != nil {
+		return calculationRequest{}, err
+	}
+
 	r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 
 	decoder := json.NewDecoder(r.Body)
@@ -144,4 +149,19 @@ func writeJSON(w http.ResponseWriter, status int, payload any) {
 	if err := json.NewEncoder(w).Encode(payload); err != nil {
 		log.Printf("api: encoding %d response: %v", status, err)
 	}
+}
+
+// Without this the server guesses the format from the bytes, so a client that
+// sends XML gets told its JSON is malformed.
+func requireJSONContentType(r *http.Request) error {
+	header := r.Header.Get("Content-Type")
+	if header == "" {
+		return unsupportedMediaType("")
+	}
+
+	mediaType, _, err := mime.ParseMediaType(header)
+	if err != nil || mediaType != "application/json" {
+		return unsupportedMediaType(header)
+	}
+	return nil
 }

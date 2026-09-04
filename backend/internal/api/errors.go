@@ -49,6 +49,18 @@ func unexpectedField(name, operation string) error {
 	}
 }
 
+func unsupportedMediaType(received string) error {
+	detail := "none was sent"
+	if received != "" {
+		detail = fmt.Sprintf("got %q", received)
+	}
+	return &requestError{
+		status:  http.StatusUnsupportedMediaType,
+		code:    "UNSUPPORTED_MEDIA_TYPE",
+		message: fmt.Sprintf("content type must be application/json, %s", detail),
+	}
+}
+
 func trailingContent() error {
 	return &requestError{
 		status:  http.StatusBadRequest,
@@ -92,6 +104,15 @@ func decodeError(err error) error {
 				status:  http.StatusBadRequest,
 				code:    "INVALID_JSON",
 				message: "body must be a JSON object",
+			}
+		}
+		// encoding/json reports an out of range number through the same error
+		// as a wrong type, and only Value tells them apart.
+		if strings.HasPrefix(typeErr.Value, "number ") {
+			return &requestError{
+				status:  http.StatusBadRequest,
+				code:    "NUMBER_OUT_OF_RANGE",
+				message: fmt.Sprintf("field %q is outside the range of a 64 bit float", typeErr.Field),
 			}
 		}
 		return &requestError{
