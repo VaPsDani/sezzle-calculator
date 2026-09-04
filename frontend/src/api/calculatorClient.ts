@@ -26,10 +26,7 @@ export async function calculate(
       body: JSON.stringify(b === undefined ? { a } : { a, b }),
     })
   } catch {
-    return failure(
-      'NETWORK_ERROR',
-      'No se pudo conectar con el servidor. Revisa tu conexión.',
-    )
+    return failure('NETWORK_ERROR', 'could not reach the server')
   }
 
   const body = await readJson(response)
@@ -37,7 +34,7 @@ export async function calculate(
   if (response.ok) {
     return isCalculationSuccess(body)
       ? { ok: true, data: body }
-      : failure('UNEXPECTED_RESPONSE', 'El servidor devolvió una respuesta inesperada.')
+      : failure('UNEXPECTED_RESPONSE', 'the server returned an unexpected response')
   }
 
   if (isErrorEnvelope(body)) {
@@ -46,7 +43,7 @@ export async function calculate(
 
   return failure(
     'UNEXPECTED_RESPONSE',
-    `El servidor respondió con el estado ${response.status}.`,
+    `the server responded with status ${response.status}`,
   )
 }
 
